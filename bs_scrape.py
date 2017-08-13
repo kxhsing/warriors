@@ -33,14 +33,36 @@ def scrape_rs_urls(urls):
 
     return scraped_html
 
-def get_points(soup=start_scrape('http://www.landofbasketball.com/stats_by_team/2016_2017_warriors_rs.htm')):
-    table = soup.findAll('b')
 
-    for x in table:
-        print x
-        print x.text
+def get_player_stats(url):
+    """Scrape each page for each player's avg points per game"""
 
-        # print x.find('b').text
+    soup = start_scrape(url)
+    # get_player_stats('http://www.landofbasketball.com/stats_by_team/2016_2017_warriors_rs.htm')
+    tables = soup.findChildren('table')
+    first_table = tables[0]
+    rows = first_table.findChildren('tr')
+    main_url = "http://www.landofbasketball.com/"
+    for row in rows[1:]:
+        player_name = row.findChildren('td')[0].text
+        games_played = row.findChildren('td')[1].text
+        avg_minutes = row.findChildren('td')[2].text
+        avg_pts = row.findChildren('td')[3].text
+        player_profile_link = main_url+row.find_all('a', href=True)[0].attrs['href'][3:]
+
+        print player_name, games_played, avg_minutes, avg_pts, player_profile_link
+
+
+def get_player_jersey(url):
+    pass
+
+
+
+
+    # avg_points = first_table.findAll('b')
+
+ 
+
 
 
 
