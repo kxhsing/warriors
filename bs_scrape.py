@@ -7,7 +7,15 @@ sample_urls = ['http://www.landofbasketball.com/stats_by_team/2015_2016_warriors
 'http://www.landofbasketball.com/stats_by_team/2016_2017_warriors_rs.htm']
 
 # REGULAR SEASON
-# class RSScraper(object):???
+
+def start_scrape(url):
+    """Scrapes url for html source"""
+
+    page = urlopen(url)
+    soup = BeautifulSoup(page, 'html.parser')
+    return soup
+
+
 def create_rs_urls_scrape(years):
     """Create list of urls to scrape for regular season stats"""
 
@@ -18,20 +26,11 @@ def create_rs_urls_scrape(years):
     return urls
 
 
-def start_scrape(url):
-    """Scrapes url for html source"""
+def scrape_players_stats(urls):
+    """For list of urls to scrape, use get_player_stats"""
 
-    page = urlopen(url)
-    soup = BeautifulSoup(page, 'html.parser')
-    return soup
-
-
-def scrape_rs_urls(urls):
-    scraped_html = []
     for url in urls:
-        scraped_html.append(start_scrape(url))
-
-    return scraped_html
+        get_player_stats(url)
 
 
 def get_player_stats(url):
@@ -46,14 +45,17 @@ def get_player_stats(url):
     for row in rows[1:]:
         player_name = row.findChildren('td')[0].text
         games_played = row.findChildren('td')[1].text
-        avg_minutes = row.findChildren('td')[2].text
+        avg_min = row.findChildren('td')[2].text
         avg_pts = row.findChildren('td')[3].text
         player_profile_link = main_url+row.find_all('a', href=True)[0].attrs['href'][3:]
 
-        print player_name, games_played, avg_minutes, avg_pts, player_profile_link
+        #call get_player_jersey(player_profile_link) for each player
+
+        print player_name, games_played, avg_min, avg_pts, player_profile_link #need to save these to db
 
 
 def get_player_jersey(url):
+    """Scrape for player jersey number"""
     pass
 
 
@@ -75,7 +77,7 @@ def get_player_jersey(url):
 
 
 rs_urls = create_rs_urls_scrape([year for year in range(1946, 2017)])
-rs_html = scrape_rs_urls(rs_urls)
+rs_player_stats = scrape_player_stats(rs_urls)
 
 
 
